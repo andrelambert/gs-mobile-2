@@ -4,6 +4,7 @@ import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Home, Compass, BookOpen, User, Info } from 'lucide-react-native';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 import AuthScreen from './src/screens/AuthScreen';
 import HomeScreen from './src/screens/HomeScreen';
@@ -25,14 +26,59 @@ function TabsNavigator() {
         tabBarStyle: {
           backgroundColor: '#020617',
           borderTopColor: '#111827',
+          paddingBottom: 20,
+          paddingTop: 12,
+          paddingHorizontal: 12,
+          height: 80,
+          borderTopWidth: 1,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+          marginBottom: 4,
         },
       }}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Início' }} />
-      <Tab.Screen name="Discover" component={DiscoverScreen} options={{ title: 'Descobrir' }} />
-      <Tab.Screen name="MyCourses" component={MyCoursesScreen} options={{ title: 'Meus Cursos' }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Meu Perfil' }} />
-      <Tab.Screen name="About" component={AboutScreen} options={{ title: 'Sobre' }} />
+      <Tab.Screen 
+        name="Home" 
+        component={HomeScreen} 
+        options={{ 
+          title: 'Início',
+          tabBarIcon: ({ color, size }) => <Home color={color} size={size} />
+        }} 
+      />
+      <Tab.Screen 
+        name="Discover" 
+        component={DiscoverScreen} 
+        options={{ 
+          title: 'Descobrir',
+          tabBarIcon: ({ color, size }) => <Compass color={color} size={size} />
+        }} 
+      />
+      <Tab.Screen 
+        name="MyCourses" 
+        component={MyCoursesScreen} 
+        options={{ 
+          title: 'Meus Cursos',
+          tabBarIcon: ({ color, size }) => <BookOpen color={color} size={size} />
+        }} 
+      />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen} 
+        options={{ 
+          title: 'Perfil',
+          tabBarIcon: ({ color, size }) => <User color={color} size={size} />
+        }} 
+      />
+      <Tab.Screen 
+        name="About" 
+        component={AboutScreen} 
+        options={{ 
+          title: 'Sobre',
+          tabBarIcon: ({ color, size }) => <Info color={color} size={size} />
+        }} 
+      />
     </Tab.Navigator>
   );
 }

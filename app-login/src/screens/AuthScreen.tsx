@@ -12,6 +12,7 @@ import {
   Keyboard,
   SafeAreaView,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
@@ -118,7 +119,7 @@ export default function AuthScreen({ navigation }: AuthScreenProps) {
         navigation.goBack();
       }
     } catch (err: any) {
-      console.error('❌ Erro de autenticação:', err.code, err.message);
+      // Mostra apenas a mensagem amigável para o usuário
       setAuthError(mapFirebaseError(err));
     } finally {
       setIsLoading(false);
@@ -142,15 +143,23 @@ export default function AuthScreen({ navigation }: AuthScreenProps) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.inner}>
-            <View style={styles.header}>
-              <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                <Text style={styles.backButtonText}>← Voltar</Text>
-              </TouchableOpacity>
-            </View>
-
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.backButtonText}>← Voltar</Text>
+        </TouchableOpacity>
+      </View>
+      
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined} 
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={0}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.content}>
               <Text style={styles.title}>
                 {isSignup ? 'Criar Conta' : 'Bem-vindo(a) de volta'}
@@ -235,8 +244,8 @@ export default function AuthScreen({ navigation }: AuthScreenProps) {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
-        </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -247,12 +256,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  inner: {
-    flex: 1,
-  },
   header: {
     padding: 16,
     paddingTop: 8,
+    backgroundColor: '#fff',
   },
   backButton: {
     paddingVertical: 8,
@@ -262,10 +269,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
   content: {
     flex: 1,
     padding: 24,
+    paddingTop: 40,
     justifyContent: 'center',
+    minHeight: 500,
   },
   title: {
     fontSize: 28,

@@ -10,13 +10,15 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserProfile, updateUserProfile } from '../services/userProfileService';
 import { UserProfile } from '../types/UserProfile';
+import UserHeader from '../components/UserHeader';
 
 export default function ProfileScreen({ navigation }: any) {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -26,6 +28,13 @@ export default function ProfileScreen({ navigation }: any) {
   const [birthday, setBirthday] = useState('');
   const [zipcode, setZipcode] = useState('');
   const [address, setAddress] = useState('');
+
+  // Estados originais para detectar alterações
+  const [originalName, setOriginalName] = useState('');
+  const [originalBio, setOriginalBio] = useState('');
+  const [originalBirthday, setOriginalBirthday] = useState('');
+  const [originalZipcode, setOriginalZipcode] = useState('');
+  const [originalAddress, setOriginalAddress] = useState('');
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -41,6 +50,13 @@ export default function ProfileScreen({ navigation }: any) {
         setBirthday(data.birthday);
         setZipcode(data.zipcode);
         setAddress(data.address);
+        
+        // Salvar valores originais
+        setOriginalName(data.name);
+        setOriginalBio(data.bio);
+        setOriginalBirthday(data.birthday);
+        setOriginalZipcode(data.zipcode);
+        setOriginalAddress(data.address);
       } catch (error) {
         console.error(error);
         Alert.alert('Erro', 'Não foi possível carregar seu perfil.');
@@ -51,6 +67,14 @@ export default function ProfileScreen({ navigation }: any) {
 
     loadProfile();
   }, [user]);
+
+  // Verifica se houve alterações
+  const hasChanges = 
+    name !== originalName ||
+    bio !== originalBio ||
+    birthday !== originalBirthday ||
+    zipcode !== originalZipcode ||
+    address !== originalAddress;
 
   const handleSave = async () => {
     if (!user) return;
@@ -63,6 +87,14 @@ export default function ProfileScreen({ navigation }: any) {
         zipcode,
         address,
       });
+      
+      // Atualizar valores originais após salvar
+      setOriginalName(name);
+      setOriginalBio(bio);
+      setOriginalBirthday(birthday);
+      setOriginalZipcode(zipcode);
+      setOriginalAddress(address);
+      
       Alert.alert('Perfil atualizado', 'Suas informações foram salvas com sucesso.');
     } catch (error) {
       console.error(error);
@@ -99,17 +131,21 @@ export default function ProfileScreen({ navigation }: any) {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.headerTitle}>Meu perfil</Text>
-        <Text style={styles.headerSubtitle}>
-          Atualize seus dados pessoais usados para personalizar a experiência no SkillBridge.
-        </Text>
+    <SafeAreaView style={styles.container}>
+      <UserHeader navigation={navigation} />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView contentContainerStyle={styles.content}>
+          <Text style={styles.headerTitle}>Meu perfil</Text>
+          <Text style={styles.headerSubtitle}>
+            Atualize seus dados pessoais usados para personalizar a experiência no SkillBridge.
+          </Text>
 
-        <View style={styles.section}>
+          <View style={styles.divider} />
+
+          <View style={styles.section}>
           <Text style={styles.sectionLabel}>Email</Text>
           <View style={styles.readonlyField}>
             <Text style={styles.readonlyText}>{user.email}</Text>
@@ -173,27 +209,25 @@ export default function ProfileScreen({ navigation }: any) {
           />
         </View>
 
-        <View style={styles.actionsRow}>
-          <TouchableOpacity
-            style={[styles.button, styles.secondaryButton]}
-            onPress={logout}
-          >
-            <Text style={styles.secondaryButtonText}>Sair</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, styles.primaryButton, saving && styles.buttonDisabled]}
-            onPress={handleSave}
-            disabled={saving}
-          >
-            {saving ? (
-              <ActivityIndicator color="#f9fafb" />
-            ) : (
-              <Text style={styles.primaryButtonText}>Salvar perfil</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        <TouchableOpacity
+          style={[
+            styles.saveButton, 
+            (!hasChanges || saving) && styles.saveButtonDisabled
+          ]}
+          onPress={handleSave}
+          disabled={!hasChanges || saving}
+        >
+          {saving ? (
+            <ActivityIndicator color="#f9fafb" />
+          ) : (
+            <Text style={styles.saveButtonText}>
+              {hasChanges ? 'Salvar alterações' : 'Nenhuma alteração'}
+            </Text>
+          )}
+        </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -204,18 +238,23 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 32,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: '700',
     color: '#f9fafb',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   headerSubtitle: {
-    fontSize: 13,
+    fontSize: 14,
     color: '#9ca3af',
+    marginBottom: 16,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#1f2937',
     marginBottom: 20,
   },
   section: {
@@ -259,38 +298,23 @@ const styles = StyleSheet.create({
   rowItem: {
     flex: 1,
   },
-  actionsRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 12,
-  },
-  button: {
-    flex: 1,
-    borderRadius: 999,
-    paddingVertical: 10,
+  saveButton: {
+    backgroundColor: '#4f46e5',
+    borderRadius: 12,
+    paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 44,
+    marginTop: 24,
+    minHeight: 50,
   },
-  primaryButton: {
-    backgroundColor: '#4f46e5',
-  },
-  primaryButtonText: {
-    color: '#f9fafb',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  secondaryButton: {
-    borderWidth: 1,
-    borderColor: '#374151',
-  },
-  secondaryButtonText: {
-    color: '#e5e7eb',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  buttonDisabled: {
+  saveButtonDisabled: {
+    backgroundColor: '#374151',
     opacity: 0.6,
+  },
+  saveButtonText: {
+    color: '#f9fafb',
+    fontSize: 15,
+    fontWeight: '600',
   },
   centerContainer: {
     flex: 1,

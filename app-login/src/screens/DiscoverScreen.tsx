@@ -8,12 +8,14 @@ import {
   ActivityIndicator,
   Alert,
   RefreshControl,
+  SafeAreaView,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { getAllTrilhas } from '../services/trilhaService';
 import { createInscricao, getInscricoesByUser } from '../services/inscricaoService';
 import { Trilha } from '../types/Trilha';
 import { Inscricao } from '../types/Inscricao';
+import UserHeader from '../components/UserHeader';
 
 export default function DiscoverScreen({ navigation }: any) {
   const { user } = useAuth();
@@ -131,12 +133,14 @@ export default function DiscoverScreen({ navigation }: any) {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <UserHeader navigation={navigation} />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Descobrir trilhas</Text>
         <Text style={styles.headerSubtitle}>
           Explore todas as trilhas de upskilling e reskilling da plataforma.
         </Text>
+        <View style={styles.divider} />
       </View>
       <FlatList
         data={trilhas}
@@ -147,7 +151,7 @@ export default function DiscoverScreen({ navigation }: any) {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -158,18 +162,23 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 12,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: '700',
     color: '#f9fafb',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   headerSubtitle: {
-    fontSize: 13,
+    fontSize: 14,
     color: '#9ca3af',
+    marginBottom: 16,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#1f2937',
   },
   listContent: {
     paddingHorizontal: 16,

@@ -1,13 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import UserHeader from '../components/UserHeader';
 
-export default function AboutScreen() {
+export default function AboutScreen({ navigation }: any) {
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.badge}>Sobre o SkillBridge</Text>
-      <Text style={styles.title}>Uma ponte entre o hoje e o futuro da sua carreira</Text>
+    <SafeAreaView style={styles.container}>
+      <UserHeader navigation={navigation} />
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.title}>Sobre o SkillBridge</Text>
+        <Text style={styles.subtitle}>Uma ponte entre o hoje e o futuro da sua carreira</Text>
 
-      <Text style={styles.paragraph}>
+        <View style={styles.divider} />
+
+        <Text style={styles.paragraph}>
         O SkillBridge nasceu com a missão de apoiar profissionais em processos de upskilling e
         reskilling em um mundo transformado pela inteligência artificial. Em vez de substituir
         pessoas, acreditamos que a tecnologia deve ampliar o potencial humano.
@@ -41,7 +46,8 @@ export default function AboutScreen() {
         nessa direção: uma plataforma simples, porém totalmente integrada ao ecossistema Firebase e
         pronta para evoluir com novas funcionalidades.
       </Text>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -52,25 +58,24 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 32,
   },
-  badge: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#1d4ed81a',
-    color: '#60a5fa',
-    borderRadius: 999,
-    paddingHorizontal: 14,
-    paddingVertical: 4,
-    fontSize: 11,
-    fontWeight: '600',
-    marginBottom: 12,
-  },
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: '700',
     color: '#f9fafb',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#9ca3af',
     marginBottom: 16,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#1f2937',
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 16,

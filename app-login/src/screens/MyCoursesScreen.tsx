@@ -8,12 +8,14 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
+  SafeAreaView,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { getInscricoesByUser, deleteInscricao } from '../services/inscricaoService';
 import { getAllTrilhas } from '../services/trilhaService';
 import { Inscricao } from '../types/Inscricao';
 import { Trilha } from '../types/Trilha';
+import UserHeader from '../components/UserHeader';
 
 interface EnrichedInscricao extends Inscricao {
   trilha?: Trilha;
@@ -121,12 +123,14 @@ export default function MyCoursesScreen({ navigation }: any) {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <UserHeader navigation={navigation} />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Meus cursos</Text>
         <Text style={styles.headerSubtitle}>
           Aqui você encontra todas as trilhas em que está inscrito.
         </Text>
+        <View style={styles.divider} />
       </View>
 
       <FlatList
@@ -172,7 +176,7 @@ export default function MyCoursesScreen({ navigation }: any) {
           </View>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -183,18 +187,23 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 12,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: '700',
     color: '#f9fafb',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   headerSubtitle: {
-    fontSize: 13,
+    fontSize: 14,
     color: '#9ca3af',
+    marginBottom: 16,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#1f2937',
   },
   listContent: {
     paddingHorizontal: 16,
