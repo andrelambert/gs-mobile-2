@@ -2,12 +2,31 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Products collection rules
-    match /products/{productId} {
-      // Allow all users (authenticated and unauthenticated) to read products
+    
+    // Trilhas collection - Everyone can read, authenticated users can create (for seeding)
+    match /trilhas/{trilhaId} {
       allow read: if true;
-      
-      // Only authenticated users can create, update, or delete products
+      allow create: if request.auth != null; // Permite usuários autenticados criarem trilhas (seed)
+      allow update, delete: if false; // Não permite editar ou deletar
+    }
+    
+    // Inscricoes collection - Authenticated users only
+    match /inscricoes/{inscricaoId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow update: if false; // Inscrições não são atualizadas, apenas criadas/deletadas
+    }
+    
+    // Users collection - User profile data
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Legacy products collection (não usado, mas mantido por compatibilidade)
+    match /products/{productId} {
+      allow read: if true;
       allow create, update, delete: if request.auth != null;
     }
     

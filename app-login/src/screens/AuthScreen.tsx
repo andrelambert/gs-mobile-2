@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
@@ -39,18 +40,24 @@ export default function AuthScreen({ navigation }: AuthScreenProps) {
     setPasswordError('');
     setConfirmError('');
 
-    if (!/.+@.+\..+/.test(trimmedEmail)) {
-      setEmailError('Enter a valid email address');
+    if (!trimmedEmail) {
+      setEmailError('Digite seu email');
+      isValid = false;
+    } else if (!/.+@.+\..+/.test(trimmedEmail)) {
+      setEmailError('Digite um email válido');
       isValid = false;
     }
 
-    if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
+    if (!password) {
+      setPasswordError('Digite sua senha');
+      isValid = false;
+    } else if (password.length < 6) {
+      setPasswordError('A senha deve ter pelo menos 6 caracteres');
       isValid = false;
     }
 
     if (isSignup && confirmPassword !== password) {
-      setConfirmError('Passwords do not match');
+      setConfirmError('As senhas não coincidem');
       isValid = false;
     }
 
@@ -61,22 +68,27 @@ export default function AuthScreen({ navigation }: AuthScreenProps) {
     const code: string | undefined = error?.code;
     switch (code) {
       case 'auth/invalid-email':
-        return 'The email address is invalid.';
+        return 'O endereço de email é inválido.';
       case 'auth/user-disabled':
-        return 'This user account has been disabled.';
+        return 'Esta conta foi desabilitada.';
       case 'auth/user-not-found':
-        return 'No user found with this email.';
+        return 'Nenhum usuário encontrado com este email.';
       case 'auth/wrong-password':
+        return 'Senha incorreta.';
       case 'auth/invalid-credential':
-        return 'Invalid credentials.';
+        return 'Email ou senha incorretos.';
       case 'auth/email-already-in-use':
-        return 'This email is already registered. Try logging in.';
+        return 'Este email já está cadastrado. Tente fazer login.';
       case 'auth/weak-password':
-        return 'Password is too weak (min 6 characters).';
+        return 'Senha muito fraca. Use pelo menos 6 caracteres.';
       case 'auth/too-many-requests':
-        return 'Too many attempts. Try again later.';
+        return 'Muitas tentativas. Tente novamente mais tarde.';
+      case 'auth/network-request-failed':
+        return 'Erro de conexão. Verifique sua internet.';
+      case 'auth/operation-not-allowed':
+        return 'Operação não permitida. Contate o suporte.';
       default:
-        return error?.message ?? 'Something went wrong. Please try again.';
+        return error?.message ?? 'Algo deu errado. Tente novamente.';
     }
   }
 
@@ -89,12 +101,24 @@ export default function AuthScreen({ navigation }: AuthScreenProps) {
     setIsLoading(true);
     try {
       if (isSignup) {
-        await createUserWithEmailAndPassword(auth, email.trim(), password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
+        console.log('✅ Cadastro bem-sucedido:', userCredential.user.email);
+        
+        // Mostra mensagem de sucesso e navega de volta
+        Alert.alert(
+          'Conta criada com sucesso!',
+          `Bem-vindo(a) ao SkillBridge, ${userCredential.user.email}!`,
+          [{ text: 'OK', onPress: () => navigation.goBack() }]
+        );
       } else {
-        await signInWithEmailAndPassword(auth, email.trim(), password);
+        const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+        console.log('✅ Login bem-sucedido:', userCredential.user.email);
+        
+        // Navega de volta imediatamente após login
+        navigation.goBack();
       }
-      // Navigation will be handled automatically by the auth state change
     } catch (err: any) {
+      console.error('❌ Erro de autenticação:', err.code, err.message);
       setAuthError(mapFirebaseError(err));
     } finally {
       setIsLoading(false);

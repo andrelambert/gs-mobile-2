@@ -1,9 +1,58 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
+import { initializeTrilhas } from '../scripts/initializeTrilhas';
+import { getAllTrilhas } from '../services/trilhaService';
 
 export default function HomeScreen({ navigation }: any) {
   const { user } = useAuth();
+  const [seeding, setSeeding] = useState(false);
+
+  const handleSeedTrilhas = async () => {
+    // Verifica se o usuário está autenticado
+    if (!user) {
+      Alert.alert(
+        'Autenticação necessária',
+        'Você precisa estar logado para inicializar as trilhas no Firestore.',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Fazer Login', onPress: () => navigation.navigate('Auth') }
+        ]
+      );
+      return;
+    }
+
+    try {
+      setSeeding(true);
+      
+      // Verifica se já existem trilhas
+      const existing = await getAllTrilhas();
+      if (existing.length > 0) {
+        Alert.alert(
+          'Trilhas já existem',
+          `Já existem ${existing.length} trilhas no banco. Deseja adicionar mais 15 trilhas?`,
+          [
+            { text: 'Cancelar', style: 'cancel' },
+            {
+              text: 'Adicionar',
+              onPress: async () => {
+                await initializeTrilhas();
+                Alert.alert('Sucesso', '15 trilhas adicionadas ao Firestore!');
+              }
+            }
+          ]
+        );
+      } else {
+        await initializeTrilhas();
+        Alert.alert('Sucesso', '15 trilhas foram adicionadas ao Firestore!');
+      }
+    } catch (error: any) {
+      console.error(error);
+      Alert.alert('Erro', error?.message || 'Não foi possível adicionar as trilhas.');
+    } finally {
+      setSeeding(false);
+    }
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -53,6 +102,19 @@ export default function HomeScreen({ navigation }: any) {
           Transição de Carreira para Análise de Dados. Ideal para quem quer migrar de área.
         </Text>
       </View>
+
+      {/* Botão temporário para popular o banco - REMOVER EM PRODUÇÃO */}
+      <TouchableOpacity
+        style={[styles.seedButton, seeding && styles.seedButtonDisabled]}
+        onPress={handleSeedTrilhas}
+        disabled={seeding}
+      >
+        {seeding ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.seedButtonText}>🌱 Inicializar Trilhas no Firestore</Text>
+        )}
+      </TouchableOpacity>
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>
@@ -133,6 +195,23 @@ const styles = StyleSheet.create({
   highlightText: {
     fontSize: 13,
     color: '#9ca3af',
+  },
+  seedButton: {
+    backgroundColor: '#16a34a',
+    borderRadius: 12,
+    padding: 14,
+    alignItems: 'center',
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: '#22c55e',
+  },
+  seedButtonDisabled: {
+    opacity: 0.6,
+  },
+  seedButtonText: {
+    color: '#f9fafb',
+    fontSize: 14,
+    fontWeight: '600',
   },
   footer: {
     borderTopWidth: 1,
