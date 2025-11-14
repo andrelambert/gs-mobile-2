@@ -17,10 +17,15 @@ export const getUserProfile = async (userId: string): Promise<UserProfile> => {
     return {
       id: userId,
       name: '',
+      lastName: '',
       birthday: '',
       bio: '',
       zipcode: '',
-      address: '',
+      street: '',
+      number: '',
+      complement: '',
+      state: '',
+      city: '',
     };
   }
 
@@ -28,10 +33,15 @@ export const getUserProfile = async (userId: string): Promise<UserProfile> => {
   return {
     id: snapshot.id,
     name: data.name ?? '',
+    lastName: data.lastName ?? '',
     birthday: data.birthday ?? '',
     bio: data.bio ?? '',
     zipcode: data.zipcode ?? '',
-    address: data.address ?? '',
+    street: data.street ?? '',
+    number: data.number ?? '',
+    complement: data.complement ?? '',
+    state: data.state ?? '',
+    city: data.city ?? '',
   };
 };
 

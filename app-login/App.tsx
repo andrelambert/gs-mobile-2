@@ -28,7 +28,7 @@ function TabsNavigator() {
           borderTopColor: '#111827',
           paddingBottom: 20,
           paddingTop: 12,
-          paddingHorizontal: 12,
+          paddingHorizontal: 8,
           height: 80,
           borderTopWidth: 1,
         },
@@ -36,6 +36,9 @@ function TabsNavigator() {
           fontSize: 11,
           fontWeight: '600',
           marginBottom: 4,
+        },
+        tabBarItemStyle: {
+          paddingHorizontal: 0,
         },
       }}
     >

@@ -99,9 +99,9 @@ export default function MyCoursesScreen({ navigation }: any) {
   if (!user) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={styles.centerTitle}>Você não está autenticado</Text>
+        <Text style={styles.centerTitle}>Faça login para ver seus cursos</Text>
         <Text style={styles.centerText}>
-          Faça login para visualizar e gerenciar as trilhas em que está inscrito.
+          Suas trilhas e progresso são vinculados à sua conta autenticada.
         </Text>
         <TouchableOpacity
           style={styles.loginButton}

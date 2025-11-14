@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#374151',
+    overflow: 'hidden',
   },
   userInfo: {
     marginLeft: 12,

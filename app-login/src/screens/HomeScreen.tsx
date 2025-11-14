@@ -58,14 +58,6 @@ export default function HomeScreen({ navigation }: any) {
             Transição de Carreira para Análise de Dados. Ideal para quem quer migrar de área.
           </Text>
         </View>
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            {user
-              ? `Logado como ${user.email}`
-              : 'Crie sua conta ou faça login para salvar suas trilhas favoritas.'}
-          </Text>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -141,15 +133,6 @@ const styles = StyleSheet.create({
   highlightText: {
     fontSize: 13,
     color: '#9ca3af',
-  },
-  footer: {
-    borderTopWidth: 1,
-    borderTopColor: '#111827',
-    paddingTop: 12,
-  },
-  footerText: {
-    fontSize: 12,
-    color: '#6b7280',
   },
 });
 
