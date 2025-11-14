@@ -8,7 +8,7 @@
 ## 🎯 Visão Geral
 
 O **SkillBridge** ajuda profissionais a se requalificarem em áreas como tecnologia, dados, IA e soft skills.  
-Em vez de gerenciar produtos Nintendo, o app agora é uma plataforma de trilhas de aprendizado, onde o usuário:
+O app é uma plataforma de trilhas de aprendizado, onde o usuário:
 
 - Explora trilhas (cursos) cadastradas no Firestore  
 - Se inscreve nelas e acompanha seus cursos em uma aba dedicada  
