@@ -1,223 +1,284 @@
 
-# Nintendo Product Management System!
+# SkillBridge — Plataforma de Upskilling e Reskilling
 
-A React Native Expo application with Firebase Authentication and Firestore for managing Nintendo video game console products.
+> Aplicativo React Native + Expo focado em trilhas de aprendizado para upskilling e reskilling de profissionais, usando Firebase Authentication e Firestore.
 
-## 🎮 Features
+---
 
-- **Product Management**: Full CRUD operations for Nintendo console products
-- **Authentication**: Firebase Auth with login/signup functionality
-- **Public Viewing**: Anyone can browse products (no authentication required)
-- **Protected Actions**: Only authenticated users can add, edit, or delete products
-- **Responsive UI**: Clean, modern interface with intuitive navigation
-- **Real-time Data**: Firestore integration for live data synchronization
-- **Nintendo Themed**: Pre-loaded with Nintendo console templates
+## 🎯 Visão Geral
 
-## 📱 Screens
+O **SkillBridge** ajuda profissionais a se requalificarem em áreas como tecnologia, dados, IA e soft skills.  
+Em vez de gerenciar produtos Nintendo, o app agora é uma plataforma de trilhas de aprendizado, onde o usuário:
 
-### 1. Product List Screen (Home)
-- Displays all Nintendo console products
-- Shows user authentication status in header
-- **Public Access**: Anyone can view products
-- **Authenticated Features**: 
-  - Add new product button
-  - Edit/Delete buttons for each product
-  - User info and logout button
+- Explora trilhas (cursos) cadastradas no Firestore  
+- Se inscreve nelas e acompanha seus cursos em uma aba dedicada  
+- Mantém um perfil com informações pessoais básicas  
+- Navega por uma **tab bar inferior com 5 telas** principais
 
-### 2. Product Detail Screen
-- View individual product details
-- **Public Access**: Anyone can view product details
-- **Authenticated Features**:
-  - Edit product inline
-  - Delete product with confirmation
-  - Auto-redirect to login if unauthenticated user tries to edit
+---
 
-### 3. Add Product Screen
-- Create new products with title and description
-- Nintendo console templates for quick setup
-- **Authentication Required**: Redirects to login if unauthenticated
+## 🔍 Principais Funcionalidades
 
-### 4. Authentication Screen
-- Combined login/signup interface
-- Email and password validation
-- Error handling with user-friendly messages
-- Switch between login and signup modes
+- **Autenticação com Firebase Auth**
+  - Login e cadastro por e-mail/senha  
+  - Persistência de sessão usando AsyncStorage  
 
-## 🔧 Technical Stack
+- **Trilhas (coleção `trilhas`)**
+  - Leitura de todas as trilhas a partir do Firestore  
+  - 15 trilhas fictícias baseadas em `CURSOS.md` (seed via script)  
 
-- **Framework**: React Native with Expo (~54.0.18)
-- **Navigation**: React Navigation v6 with Stack Navigator
-- **Backend**: Firebase Firestore for data storage
-- **Authentication**: Firebase Auth with email/password
-- **Language**: TypeScript for type safety
-- **State Management**: React Context (AuthContext)
+- **Inscrições (coleção `inscricoes`)**
+  - Criar inscrição: usuário adiciona trilha em "Meus Cursos"  
+  - Listar inscrições filtrando por `userId`  
+  - Remover inscrição (cancelar curso)  
 
-## 🚀 Getting Started
+- **Perfil do Usuário (coleção `users`)**
+  - Campos extras associados ao UID do Firebase Auth:  
+    - `name`, `birthday`, `bio`, `zipcode`, `address`  
+  - Tela de edição de perfil com salvamento no Firestore  
 
-### Prerequisites
-- Node.js (v16 or higher)
-- Expo CLI (`npm install -g expo-cli`)
-- Firebase project setup
+- **Navegação**
+  - **Bottom Tab Navigator** com 5 telas:
+    - Home  
+    - Descobrir (trilhas)  
+    - Meus Cursos  
+    - Meu Perfil  
+    - Sobre o SkillBridge  
 
-### Installation
+- **UX e Feedback Visual**
+  - Loaders (`ActivityIndicator`) em operações assíncronas  
+  - `Alert.alert` para erros, confirmações e mensagens de sucesso  
+  - Layout moderno com tema **tecnologia + IA + educação**
 
-1. **Clone and Navigate**
+---
+
+## 📱 Telas do Aplicativo
+
+### 1. Home (`HomeScreen.tsx`)
+- Tela inicial de boas-vindas  
+- Cards com atalhos para **Descobrir**, **Meus Cursos** e **Meu Perfil**  
+- Destaques de trilhas recomendadas para quem quer migrar de área  
+
+### 2. Descobrir (`DiscoverScreen.tsx`)
+- Lista todas as trilhas da coleção `trilhas`  
+- Cada card mostra título, categoria, nível, duração e descrição resumida  
+- Botão **“Adicionar aos meus cursos”** que cria um documento em `inscricoes`  
+- Bloqueia o botão e informa quando o usuário já está inscrito na trilha  
+
+### 3. Meus Cursos (`MyCoursesScreen.tsx`)
+- Lista apenas as trilhas em que o usuário autenticado está inscrito  
+- Faz join entre `inscricoes` (filtrando por `userId`) e `trilhas`  
+- Exibe data de inscrição, categoria e duração  
+- Botão **“Remover inscrição”** com confirmação, removendo doc em `inscricoes`  
+
+### 4. Meu Perfil (`ProfileScreen.tsx`)
+- Mostra o e-mail do usuário logado e os campos adicionais do perfil  
+- Permite editar:
+  - Nome  
+  - Bio  
+  - Data de nascimento  
+  - CEP  
+  - Endereço  
+- Salva os dados na coleção `users` com o id = `uid` do Firebase Auth  
+- Inclui botão **“Sair”** que faz logout via `AuthContext`  
+
+### 5. Sobre o SkillBridge (`AboutScreen.tsx`)
+- Explica a missão da plataforma  
+- Lista benefícios de upskilling e reskilling  
+- Traz uma visão de futuro da integração entre pessoas e IA  
+
+### Tela de Autenticação (`AuthScreen.tsx`)
+- Tela combinada de login/cadastro  
+- Valida e-mail e senha, exibe mensagens de erro amigáveis  
+- Alterna entre modo “Sign In” e “Sign Up”  
+- É exibida antes da navegação por abas para usuários não autenticados  
+
+> Observação: algumas telas antigas relacionadas a `products` foram mantidas apenas como legado e **não fazem parte** do fluxo do SkillBridge.
+
+---
+
+## 🔧 Stack Técnica
+
+- **Framework**: React Native com Expo (~54.0.18)  
+- **Linguagem**: TypeScript (~5.9.x)  
+- **Navegação**: React Navigation v6
+  - `@react-navigation/bottom-tabs` (tab bar inferior)  
+  - `@react-navigation/stack` (stack para auth)  
+- **Backend**: Firebase Firestore  
+- **Autenticação**: Firebase Auth (email/senha) com `initializeAuth` + `AsyncStorage`  
+- **Gerência de Estado de Auth**: Context API (`AuthContext`)  
+
+---
+
+## 🚀 Como Rodar o Projeto
+
+### Pré-requisitos
+
+- Node.js (v16 ou superior)  
+- Expo CLI (`npm install -g expo-cli`)  
+- Conta Firebase e projeto configurado (já incluso neste template)  
+
+### Passo a passo
+
+1. **Entrar na pasta do app**
    ```bash
    cd app-login
    ```
 
-2. **Install Dependencies**
+2. **Instalar dependências**
    ```bash
    npm install
    ```
 
-3. **Firebase Setup**
-   - Firebase configuration is already set up in `src/firebaseConfig.ts`
-   - Project: `fiap-mobile-8ca1d`
-   - **Deploy Firestore Rules** (see `FIRESTORE_SETUP.md`)
+3. **Configurar Firebase (se necessário)**
+   - O arquivo `src/firebaseConfig.ts` já está configurado com o projeto  
+     `fiap-mobile-8ca1d`.  
+   - Confira as regras do Firestore em `FIRESTORE_SETUP.md` e `firestore.rules`.  
 
-4. **Run the Application**
+4. **Rodar o aplicativo**
    ```bash
    npm start
-   # or
+   # ou
    expo start
    ```
 
-## 📁 Project Structure
+---
 
-```
+## 🗃️ Modelo de Dados (Firestore)
+
+### Coleção `users`
+
+- Criada automaticamente pelo Firebase Authentication (e-mail/senha).  
+- Documento de perfil adicional em `users/{uid}` contendo:
+  - `name: string`  
+  - `birthday: string` (formato `YYYY-MM-DD`)  
+  - `bio: string`  
+  - `zipcode: string`  
+  - `address: string`  
+
+### Coleção `trilhas`
+
+- Representa cada trilha/curso disponível na plataforma.  
+- Campos:
+  - `title: string`  
+  - `description: string`  
+  - `category: string`  
+  - `duration: string` (ex.: "12 horas")  
+  - `level: 'iniciante' | 'intermediário' | 'avançado'`  
+  - `imageUrl: string`  
+
+### Coleção `inscricoes`
+
+- Relaciona usuário → trilha.  
+- Campos:
+  - `userId: string` (UID do Firebase Auth)  
+  - `trilhaId: string` (id do documento em `trilhas`)  
+  - `createdAt: Timestamp` (serverTimestamp)  
+
+---
+
+## 📁 Estrutura do Projeto (atualizada)
+
+```bash
 app-login/
 ├── src/
 │   ├── contexts/
-│   │   └── AuthContext.tsx          # Authentication state management
+│   │   └── AuthContext.tsx            # Contexto de autenticação (Firebase Auth)
 │   ├── screens/
-│   │   ├── ProductListScreen.tsx    # Home screen with product list
-│   │   ├── ProductDetailScreen.tsx  # Individual product view/edit
-│   │   ├── AddProductScreen.tsx     # Create new product
-│   │   └── AuthScreen.tsx          # Login/Signup combined screen
+│   │   ├── HomeScreen.tsx            # Tela inicial (Home)
+│   │   ├── DiscoverScreen.tsx        # Lista de trilhas (Descobrir)
+│   │   ├── MyCoursesScreen.tsx       # Trilhas em que o usuário está inscrito
+│   │   ├── ProfileScreen.tsx         # Edição de perfil do usuário
+│   │   ├── AboutScreen.tsx           # Tela "Sobre o SkillBridge"
+│   │   ├── AuthScreen.tsx            # Tela de login/cadastro
+│   │   ├── LoginScreen.tsx           # Telas legadas (não usadas na navegação principal)
+│   │   ├── SignupScreen.tsx
+│   │   └── SuccessScreen.tsx
 │   ├── services/
-│   │   └── productService.ts       # Firestore CRUD operations
+│   │   ├── trilhaService.ts          # Leitura de trilhas (Firestore)
+│   │   ├── inscricaoService.ts       # CRUD de inscrições
+│   │   ├── userProfileService.ts     # Leitura/atualização de perfil do usuário
+│   │   └── productService.ts         # Serviço legado (não usado no SkillBridge)
 │   ├── types/
-│   │   └── Product.ts              # TypeScript interfaces
+│   │   ├── Trilha.ts                 # Tipos de trilhas
+│   │   ├── Inscricao.ts              # Tipos de inscrições
+│   │   ├── UserProfile.ts            # Tipos de perfil de usuário
+│   │   └── Product.ts                # Tipos legados
 │   ├── scripts/
-│   │   └── initializeData.ts       # Database initialization helper
-│   └── firebaseConfig.ts           # Firebase configuration
-├── App.tsx                         # Main app with navigation setup
-└── package.json                    # Dependencies and scripts
+│   │   ├── initializeTrilhas.ts      # Seed das 15 trilhas fictícias
+│   │   └── initializeData.ts         # Script legado (Nintendo)
+│   └── firebaseConfig.ts             # Configuração do Firebase (app, auth, db)
+├── App.tsx                           # Navegação raiz (Auth + Bottom Tabs)
+└── package.json                      # Dependências e scripts
 ```
 
-## 🔒 Security & Permissions
+---
 
-### Firestore Security Rules
+## 🔒 Regras de Segurança (exemplo)
+
+As regras exatas devem ser ajustadas conforme o ambiente, mas um exemplo simples seria:
+
 ```javascript
-// Read access: Open to everyone
-allow read: if true;
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Leituras públicas das trilhas
+    match /trilhas/{trilhaId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
 
-// Write access: Authenticated users only  
-allow create, update, delete: if request.auth != null;
+    // Inscrições: apenas o próprio usuário pode criar, listar e remover
+    match /inscricoes/{inscricaoId} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == request.resource.data.userId;
+    }
+
+    // Perfil: o usuário só pode ler/editar o próprio documento
+    match /users/{userId} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == userId;
+    }
+  }
+}
 ```
 
-### Authentication Flow
-1. **Unauthenticated Users**: Can browse and view products
-2. **Authentication Required**: For add, edit, delete operations
-3. **Auto-Redirect**: Prompts login when authentication needed
-4. **Persistent Auth**: Maintains login state across app restarts
+Veja `FIRESTORE_SETUP.md` para instruções detalhadas de deploy de regras.
 
-## 🎮 Nintendo Console Data
+---
 
-The app includes pre-defined Nintendo console templates:
+## 🧪 Comportamento de Autenticação
 
-- Nintendo Switch
-- Nintendo Switch OLED  
-- Nintendo 3DS
-- Nintendo Wii U
-- Nintendo Wii
-- Nintendo DS Lite
+1. **Usuário não autenticado**
+   - É redirecionado para a tela de autenticação (`AuthScreen`)  
+   - Só vê a navegação em abas após fazer login/cadastro  
 
-Users can select these templates when creating new products for quick setup.
+2. **Usuário autenticado**
+   - Acessa todas as 5 abas (Home, Descobrir, Meus Cursos, Meu Perfil, Sobre)  
+   - Pode criar/remover inscrições e atualizar o perfil  
 
-## 🛠️ Development Features
+3. **Persistência da sessão**
+   - O `AuthContext` escuta `onAuthStateChanged` do Firebase  
+   - A sessão permanece entre reinicializações do app (via `AsyncStorage`)  
 
-### Type Safety
-- Full TypeScript implementation
-- Defined interfaces for Product, requests, and props
-- Type-safe Firebase operations
+---
 
-### Error Handling
-- Comprehensive Firebase error mapping
-- User-friendly error messages
-- Graceful fallbacks for network issues
+## ✅ Cobertura dos Requisitos do Projeto
 
-### User Experience
-- Loading states for all async operations
-- Pull-to-refresh functionality
-- Confirmation dialogs for destructive actions
-- Keyboard-aware layouts
+- **Telas e Navegação**
+  - 5 telas principais em bottom tab navigation  
+  - Navegação fluida entre Home, Descobrir, Meus Cursos, Meu Perfil e Sobre  
 
-### Code Organization
-- Separation of concerns with services layer
-- Reusable contexts for state management
-- Clean component architecture
+- **CRUD com Firebase**
+  - Trilhas: leitura de todos os documentos em `trilhas`  
+  - Inscrições: criar (`addDoc`), listar (`getDocs` com `where`), deletar (`deleteDoc`)  
+  - Perfil do usuário: leitura e `updateDoc` / `setDoc` dos campos adicionais  
 
-## 📝 Usage Examples
+- **Estilização**
+  - Tema inspirado em tecnologia + IA + educação (cores escuras, acentos em roxo/verde/azul)  
 
-### Adding a New Product
-1. Ensure you're logged in (or app will prompt)
-2. Tap "Add Product" button on home screen
-3. Either fill form manually or tap a Nintendo console template
-4. Enter title and description
-5. Tap "Create Product"
+- **Arquitetura**
+  - Separação clara entre telas, serviços, tipos e contexto de autenticação  
+  - Código organizado em pastas (`screens`, `services`, `types`, `contexts`, `scripts`)  
 
-### Editing a Product
-1. Tap any product from the list or tap "Edit" button
-2. In detail view, tap "Edit" (login required)
-3. Modify title/description
-4. Tap "Save" to confirm changes
-
-### Deleting a Product
-1. From list: tap "Delete" button next to product
-2. From detail: tap "Delete" button in product detail
-3. Confirm deletion in dialog (login required)
-
-## 🔧 Configuration
-
-### Firebase Configuration
-Update `src/firebaseConfig.ts` with your Firebase project settings:
-```typescript
-const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-project.firebaseapp.com", 
-  projectId: "your-project-id",
-  // ... other config
-};
-```
-
-### Firestore Rules Deployment
-See `FIRESTORE_SETUP.md` for detailed instructions on deploying security rules.
-
-## 🎯 Key Features Implementation
-
-### Authentication State Management
-- Context-based auth state sharing
-- Automatic navigation based on auth status
-- Persistent login across app sessions
-
-### CRUD Operations
-- **Create**: Add new products with user attribution
-- **Read**: Fetch all products or individual product by ID
-- **Update**: Modify existing product data
-- **Delete**: Remove products with confirmation
-
-### Navigation System
-- Stack-based navigation with React Navigation
-- Screen-to-screen parameter passing
-- Back navigation handling
-- Deep linking support ready
-
-### Data Validation
-- Required field validation
-- Email format validation
-- Password strength requirements
-- Form error state management
-
-This system provides a complete, production-ready foundation for a product management application with proper authentication, security, and user experience considerations.
+Este README reflete o estado atual do projeto, já adaptado de um sistema de produtos Nintendo para a plataforma **SkillBridge** de trilhas de aprendizado.
