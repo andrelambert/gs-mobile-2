@@ -158,7 +158,6 @@ export default function ProfileScreen({ navigation }: any) {
         if (address) {
           // Preenche os campos automaticamente
           setStreet(address.logradouro || '');
-          setComplement(address.complemento || '');
           setCity(address.localidade || '');
           setState(address.uf || '');
           
