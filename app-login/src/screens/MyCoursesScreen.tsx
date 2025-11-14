@@ -19,7 +19,7 @@ interface EnrichedInscricao extends Inscricao {
   trilha?: Trilha;
 }
 
-export default function MyCoursesScreen() {
+export default function MyCoursesScreen({ navigation }: any) {
   const { user } = useAuth();
   const [items, setItems] = useState<EnrichedInscricao[]>([]);
   const [loading, setLoading] = useState(true);
@@ -101,6 +101,12 @@ export default function MyCoursesScreen() {
         <Text style={styles.centerText}>
           Faça login para visualizar e gerenciar as trilhas em que está inscrito.
         </Text>
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={() => navigation.navigate('Auth')}
+        >
+          <Text style={styles.loginButtonText}>Fazer Login</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -270,6 +276,21 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#9ca3af',
     textAlign: 'center',
+  },
+  loginButton: {
+    backgroundColor: '#4f46e5',
+    borderRadius: 999,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  loginButtonText: {
+    color: '#f9fafb',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });
 

@@ -38,7 +38,7 @@ function TabsNavigator() {
 }
 
 function RootNavigator() {
-  const { user, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -51,13 +51,10 @@ function RootNavigator() {
 
   return (
     <NavigationContainer>
-      {user ? (
-        <TabsNavigator />
-      ) : (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Auth" component={AuthScreen} />
-        </Stack.Navigator>
-      )}
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Main" component={TabsNavigator} />
+        <Stack.Screen name="Auth" component={AuthScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

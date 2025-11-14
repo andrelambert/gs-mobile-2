@@ -15,7 +15,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getUserProfile, updateUserProfile } from '../services/userProfileService';
 import { UserProfile } from '../types/UserProfile';
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }: any) {
   const { user, logout } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -77,8 +77,14 @@ export default function ProfileScreen() {
       <View style={styles.centerContainer}>
         <Text style={styles.centerTitle}>Faça login para ver seu perfil</Text>
         <Text style={styles.centerText}>
-          Suas informações de perfil são vinculadas à sua conta autenticada no Firebase.
+          Suas informações de perfil são vinculadas à sua conta autenticada.
         </Text>
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={() => navigation.navigate('Auth')}
+        >
+          <Text style={styles.loginButtonText}>Fazer Login</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -304,6 +310,21 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#9ca3af',
     textAlign: 'center',
+    marginBottom: 20,
+  },
+  loginButton: {
+    backgroundColor: '#4f46e5',
+    borderRadius: 999,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loginButtonText: {
+    color: '#f9fafb',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });
 

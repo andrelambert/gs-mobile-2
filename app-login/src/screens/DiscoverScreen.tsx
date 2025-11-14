@@ -15,7 +15,7 @@ import { createInscricao, getInscricoesByUser } from '../services/inscricaoServi
 import { Trilha } from '../types/Trilha';
 import { Inscricao } from '../types/Inscricao';
 
-export default function DiscoverScreen() {
+export default function DiscoverScreen({ navigation }: any) {
   const { user } = useAuth();
   const [trilhas, setTrilhas] = useState<Trilha[]>([]);
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
@@ -55,7 +55,14 @@ export default function DiscoverScreen() {
 
   const handleAddToMyCourses = async (trilha: Trilha) => {
     if (!user) {
-      Alert.alert('Autenticação necessária', 'Faça login para se inscrever na trilha.');
+      Alert.alert(
+        'Autenticação necessária', 
+        'Faça login para se inscrever na trilha.',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Fazer Login', onPress: () => (navigation as any).navigate('Auth') }
+        ]
+      );
       return;
     }
     if (isInscrito(trilha.id)) {

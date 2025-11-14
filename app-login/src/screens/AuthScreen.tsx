@@ -123,18 +123,18 @@ export default function AuthScreen({ navigation }: AuthScreenProps) {
           <View style={styles.inner}>
             <View style={styles.header}>
               <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                <Text style={styles.backButtonText}>← Back</Text>
+                <Text style={styles.backButtonText}>← Voltar</Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.content}>
               <Text style={styles.title}>
-                {isSignup ? 'Create Account' : 'Welcome Back'}
+                {isSignup ? 'Criar Conta' : 'Bem-vindo(a) de volta'}
               </Text>
               <Text style={styles.subtitle}>
                 {isSignup 
-                  ? 'Sign up to start managing products' 
-                  : 'Sign in to manage your products'
+                  ? 'Crie sua conta para se inscrever em trilhas e personalizar seu perfil' 
+                  : 'Entre para acessar suas trilhas e perfil'
                 }
               </Text>
 
@@ -158,7 +158,7 @@ export default function AuthScreen({ navigation }: AuthScreenProps) {
               {!!emailError && <Text style={styles.errorText}>{emailError}</Text>}
 
               <TextInput
-                placeholder="Password"
+                placeholder="Senha"
                 value={password}
                 onChangeText={(text) => {
                   setPassword(text);
@@ -172,7 +172,7 @@ export default function AuthScreen({ navigation }: AuthScreenProps) {
               {isSignup && (
                 <>
                   <TextInput
-                    placeholder="Confirm Password"
+                    placeholder="Confirmar Senha"
                     value={confirmPassword}
                     onChangeText={(text) => {
                       setConfirmPassword(text);
@@ -195,18 +195,18 @@ export default function AuthScreen({ navigation }: AuthScreenProps) {
                   <ActivityIndicator color="#fff" />
                 ) : (
                   <Text style={styles.authButtonText}>
-                    {isSignup ? 'Sign Up' : 'Sign In'}
+                    {isSignup ? 'Criar Conta' : 'Entrar'}
                   </Text>
                 )}
               </TouchableOpacity>
 
               <View style={styles.switchContainer}>
                 <Text style={styles.switchText}>
-                  {isSignup ? 'Already have an account?' : "Don't have an account?"}
+                  {isSignup ? 'Já tem uma conta?' : "Não tem uma conta?"}
                 </Text>
                 <TouchableOpacity onPress={toggleAuthMode}>
                   <Text style={styles.switchLink}>
-                    {isSignup ? 'Sign In' : 'Sign Up'}
+                    {isSignup ? 'Entrar' : 'Criar Conta'}
                   </Text>
                 </TouchableOpacity>
               </View>
