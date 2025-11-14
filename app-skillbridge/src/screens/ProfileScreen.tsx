@@ -17,12 +17,14 @@ import { getUserProfile, updateUserProfile } from '../services/userProfileServic
 import { UserProfile } from '../types/UserProfile';
 import UserHeader from '../components/UserHeader';
 import { formatDate, formatCEP } from '../utils/formatters';
+import { getAddressByCep, isValidCep } from '../services/viaCepService';
 
 export default function ProfileScreen({ navigation }: any) {
   const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [loadingCep, setLoadingCep] = useState(false);
 
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -140,6 +142,39 @@ export default function ProfileScreen({ navigation }: any) {
     }
   };
 
+  const handleCepChange = async (text: string) => {
+    const formattedCep = formatCEP(text);
+    setZipcode(formattedCep);
+
+    // Remove a formatação para validar
+    const cleanCep = text.replace(/\D/g, '');
+
+    // Se o CEP tiver 8 dígitos, busca o endereço
+    if (cleanCep.length === 8 && isValidCep(cleanCep)) {
+      setLoadingCep(true);
+      try {
+        const address = await getAddressByCep(cleanCep);
+        
+        if (address) {
+          // Preenche os campos automaticamente
+          setStreet(address.logradouro || '');
+          setComplement(address.complemento || '');
+          setCity(address.localidade || '');
+          setState(address.uf || '');
+          
+          // Feedback visual de sucesso
+          Alert.alert('CEP encontrado!', 'Endereço preenchido automaticamente.');
+        } else {
+          Alert.alert('CEP não encontrado', 'Não foi possível encontrar o endereço para este CEP.');
+        }
+      } catch (error: any) {
+        Alert.alert('Erro ao consultar CEP', error.message || 'Tente novamente.');
+      } finally {
+        setLoadingCep(false);
+      }
+    }
+  };
+
   if (!user) {
     return (
       <View style={styles.centerContainer}>
@@ -237,15 +272,26 @@ export default function ProfileScreen({ navigation }: any) {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>CEP</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Text style={styles.sectionLabel}>CEP</Text>
+              {loadingCep && (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <ActivityIndicator size="small" color="#4f46e5" />
+                  <Text style={{ fontSize: 12, color: '#4f46e5', marginLeft: 6 }}>
+                    Buscando endereço...
+                  </Text>
+                </View>
+              )}
+            </View>
             <TextInput
               style={styles.input}
               value={zipcode}
-              onChangeText={(text) => setZipcode(formatCEP(text))}
+              onChangeText={handleCepChange}
               placeholder="00000-000"
               placeholderTextColor="#6b7280"
               keyboardType="numeric"
               maxLength={9}
+              editable={!loadingCep}
             />
           </View>
 
