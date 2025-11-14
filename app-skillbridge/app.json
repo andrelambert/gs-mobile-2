@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "app-login",
-    "slug": "app-login",
+    "name": "SkillBridge",
+    "slug": "app-skillbridge",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

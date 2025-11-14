@@ -122,7 +122,7 @@ O app é uma plataforma de trilhas de aprendizado, onde o usuário:
 
 1. **Entrar na pasta do app**
    ```bash
-   cd app-login
+   cd app-skillbridge
    ```
 
 2. **Instalar dependências**
@@ -180,7 +180,7 @@ O app é uma plataforma de trilhas de aprendizado, onde o usuário:
 ## 📁 Estrutura do Projeto (atualizada)
 
 ```bash
-app-login/
+app-skillbridge/
 ├── src/
 │   ├── contexts/
 │   │   └── AuthContext.tsx            # Contexto de autenticação (Firebase Auth)
