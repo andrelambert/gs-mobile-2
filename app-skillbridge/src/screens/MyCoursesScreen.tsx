@@ -124,7 +124,6 @@ export default function MyCoursesScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <UserHeader navigation={navigation} />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Meus cursos</Text>
         <Text style={styles.headerSubtitle}>
@@ -143,7 +142,12 @@ export default function MyCoursesScreen({ navigation }: any) {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => item.trilha && navigation.navigate('CourseDetail', { trilhaId: item.trilha.id })}
+            activeOpacity={0.7}
+            disabled={!item.trilha}
+          >
             <Text style={styles.titleText}>
               {item.trilha?.title ?? 'Trilha removida'}
             </Text>
@@ -156,7 +160,10 @@ export default function MyCoursesScreen({ navigation }: any) {
             </Text>
             <TouchableOpacity
               style={styles.removeButton}
-              onPress={() => handleRemove(item)}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleRemove(item);
+              }}
               disabled={removing === item.id}
             >
               {removing === item.id ? (
@@ -165,7 +172,7 @@ export default function MyCoursesScreen({ navigation }: any) {
                 <Text style={styles.removeButtonText}>Remover inscrição</Text>
               )}
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>

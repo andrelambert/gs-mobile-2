@@ -12,6 +12,7 @@ import DiscoverScreen from './src/screens/DiscoverScreen';
 import MyCoursesScreen from './src/screens/MyCoursesScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import AboutScreen from './src/screens/AboutScreen';
+import CourseDetailScreen from './src/screens/CourseDetailScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -103,6 +104,7 @@ function RootNavigator() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Main" component={TabsNavigator} />
         <Stack.Screen name="Auth" component={AuthScreen} />
+        <Stack.Screen name="CourseDetail" component={CourseDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

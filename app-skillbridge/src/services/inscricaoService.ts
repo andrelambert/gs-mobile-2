@@ -49,4 +49,31 @@ export const deleteInscricao = async (id: string): Promise<void> => {
   await deleteDoc(doc(db, INSCRICOES_COLLECTION, id));
 };
 
+export const checkInscricao = async (
+  userId: string,
+  trilhaId: string,
+): Promise<boolean> => {
+  const q = query(
+    collection(db, INSCRICOES_COLLECTION),
+    where('userId', '==', userId),
+    where('trilhaId', '==', trilhaId),
+  );
+  const snapshot = await getDocs(q);
+  return !snapshot.empty;
+};
+
+export const addInscricao = async (
+  userId: string,
+  trilhaId: string,
+): Promise<void> => {
+  // Verifica se já está inscrito
+  const alreadyEnrolled = await checkInscricao(userId, trilhaId);
+  if (alreadyEnrolled) {
+    throw new Error('Você já está inscrito neste curso.');
+  }
+
+  // Cria a inscrição
+  await createInscricao({ userId, trilhaId });
+};
+
 

@@ -3,11 +3,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Trilhas collection - Everyone can read, authenticated users can create (for seeding)
+    // Trilhas collection - Everyone can read, authenticated users can create/update (for seeding)
     match /trilhas/{trilhaId} {
       allow read: if true;
-      allow create: if request.auth != null; // Permite usuários autenticados criarem trilhas (seed)
-      allow update, delete: if false; // Não permite editar ou deletar
+      allow create, update: if request.auth != null; // Permite usuários autenticados criarem e atualizarem trilhas (seed)
+      allow delete: if false; // Não permite deletar
     }
     
     // Inscricoes collection - Authenticated users only

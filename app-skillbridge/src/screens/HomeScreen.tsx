@@ -1,14 +1,40 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
-import { useAuth } from '../contexts/AuthContext';
-import UserHeader from '../components/UserHeader';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
+import { getAllTrilhas } from '../services/trilhaService';
+import { Trilha } from '../types/Trilha';
 
 export default function HomeScreen({ navigation }: any) {
-  const { user } = useAuth();
+  const [featuredCourses, setFeaturedCourses] = useState<Trilha[]>([]);
+  const [loadingCourses, setLoadingCourses] = useState(true);
+
+  const featuredTitles = [
+    'Blockchain e Criptomoedas',
+    'Cibersegurança Essencial',
+    'Cloud Computing com AWS',
+    'Comunicação e Liderança',
+    'Desenvolvimento Web Full Stack com React e Node.js'
+  ];
+
+  useEffect(() => {
+    loadFeaturedCourses();
+  }, []);
+
+  const loadFeaturedCourses = async () => {
+    try {
+      const allTrilhas = await getAllTrilhas();
+      const featured = allTrilhas.filter(trilha => 
+        featuredTitles.includes(trilha.title)
+      );
+      setFeaturedCourses(featured);
+    } catch (error) {
+      console.error('Erro ao carregar cursos em destaque:', error);
+    } finally {
+      setLoadingCourses(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <UserHeader navigation={navigation} />
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>SkillBridge</Text>
         <Text style={styles.subtitle}>Upskilling e Reskilling para o futuro com IA</Text>
@@ -18,6 +44,43 @@ export default function HomeScreen({ navigation }: any) {
         </Text>
 
         <View style={styles.divider} />
+
+        {/* Carrossel de cursos em destaque */}
+        <View style={styles.featuredSection}>
+          <Text style={styles.featuredTitle}>Cursos em Destaque</Text>
+          {loadingCourses ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator color="#4f46e5" />
+            </View>
+          ) : (
+            <FlatList
+              horizontal
+              data={featuredCourses}
+              keyExtractor={(item) => item.id}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.carouselContent}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.featuredCard}
+                  onPress={() => navigation.navigate('CourseDetail', { trilhaId: item.id })}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.featuredCardHeader}>
+                    <Text style={styles.featuredCardCategory}>{item.category}</Text>
+                    <Text style={styles.featuredCardLevel}>{item.level}</Text>
+                  </View>
+                  <Text style={styles.featuredCardTitle} numberOfLines={2}>
+                    {item.title}
+                  </Text>
+                  <Text style={styles.featuredCardDescription} numberOfLines={2}>
+                    {item.description}
+                  </Text>
+                  <Text style={styles.featuredCardDuration}>{item.duration}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          )}
+        </View>
 
         <View style={styles.cardGrid}>
         <TouchableOpacity
@@ -133,6 +196,68 @@ const styles = StyleSheet.create({
   highlightText: {
     fontSize: 13,
     color: '#9ca3af',
+  },
+  featuredSection: {
+    marginBottom: 24,
+  },
+  featuredTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#f9fafb',
+    marginBottom: 16,
+  },
+  loadingContainer: {
+    paddingVertical: 40,
+    alignItems: 'center',
+  },
+  carouselContent: {
+    paddingRight: 20,
+  },
+  featuredCard: {
+    width: 280,
+    backgroundColor: '#111827',
+    borderRadius: 16,
+    padding: 16,
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#1f2937',
+  },
+  featuredCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  featuredCardCategory: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#22c55e',
+  },
+  featuredCardLevel: {
+    fontSize: 11,
+    color: '#a5b4fc',
+    backgroundColor: '#312e81',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+    textTransform: 'capitalize',
+  },
+  featuredCardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#f9fafb',
+    marginBottom: 8,
+    lineHeight: 22,
+  },
+  featuredCardDescription: {
+    fontSize: 13,
+    color: '#9ca3af',
+    marginBottom: 12,
+    lineHeight: 18,
+  },
+  featuredCardDuration: {
+    fontSize: 12,
+    color: '#6b7280',
   },
 });
 

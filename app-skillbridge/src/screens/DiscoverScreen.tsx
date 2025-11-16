@@ -91,7 +91,11 @@ export default function DiscoverScreen({ navigation }: any) {
     const isSaving = saving === item.id;
 
     return (
-      <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => navigation.navigate('CourseDetail', { trilhaId: item.id })}
+        activeOpacity={0.7}
+      >
         <View style={styles.cardHeader}>
           <Text style={styles.trilhaTitle}>{item.title}</Text>
           <Text style={styles.levelBadge}>{item.level}</Text>
@@ -108,7 +112,10 @@ export default function DiscoverScreen({ navigation }: any) {
               inscrito && styles.actionButtonDisabled,
             ]}
             disabled={inscrito || isSaving}
-            onPress={() => handleAddToMyCourses(item)}
+            onPress={(e) => {
+              e.stopPropagation();
+              handleAddToMyCourses(item);
+            }}
           >
             {isSaving ? (
               <ActivityIndicator color="#f9fafb" />
@@ -119,7 +126,7 @@ export default function DiscoverScreen({ navigation }: any) {
             )}
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -134,7 +141,6 @@ export default function DiscoverScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <UserHeader navigation={navigation} />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Descobrir trilhas</Text>
         <Text style={styles.headerSubtitle}>
