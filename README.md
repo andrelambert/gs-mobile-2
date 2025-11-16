@@ -229,22 +229,9 @@ O **SkillBridge** é uma plataforma mobile que ajuda profissionais a se requalif
 
 4. **Configure o Firebase**
    - O arquivo `src/firebaseConfig.ts` já está configurado com o projeto `fiap-mobile-8ca1d`
-   - Se necessário, atualize com suas credenciais do Firebase Console
-   - Confira as regras do Firestore em `firestore.rules`
+   - As regras do Firestore já estão configuradas e publicadas no Firebase
 
-5. **Deploy das regras do Firestore (primeira vez)**
-   ```bash
-   # No diretório raiz do projeto
-   firebase deploy --only firestore:rules
-   ```
-   
-   Ou configure manualmente no Firebase Console:
-   - Acesse: https://console.firebase.google.com/
-   - Vá em Firestore Database → Rules
-   - Cole o conteúdo de `firestore.rules`
-   - Publique
-
-6. **Rode o aplicativo**
+5. **Rode o aplicativo**
    ```bash
    npm start
    # ou
