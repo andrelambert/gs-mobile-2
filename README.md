@@ -14,7 +14,7 @@ Este projeto foi desenvolvido por:
 
 ---
 
-## 👥 Vídeo demonstrativo (5min)
+## 🎥 Vídeo demonstrativo (5min)
 
 https://youtu.be/Np-I8Djucbk
 
