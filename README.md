@@ -14,6 +14,12 @@ Este projeto foi desenvolvido por:
 
 ---
 
+## 👥 Vídeo demonstrativo (5min)
+
+https://youtu.be/Np-I8Djucbk
+
+---
+
 ## 🎯 Visão Geral
 
 O **SkillBridge** é uma plataforma mobile que ajuda profissionais a se requalificarem em áreas como tecnologia, dados, IA e soft skills. O aplicativo oferece trilhas de aprendizado estruturadas, permitindo que usuários:
